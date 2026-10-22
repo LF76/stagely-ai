@@ -1,0 +1,29 @@
+{
+  "name": "stagely-ai",
+  "version": "1.0.0",
+  "description": "Sub-2s automated visual staging engine for e-commerce brands powered by Runware edge diffusion.",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "build": "echo 'No compile step required for static runtime'",
+    "test": "node --test"
+  },
+  "keywords": [
+    "runware",
+    "generative-ai",
+    "diffusion",
+    "flux",
+    "ecommerce",
+    "product-staging",
+    "inpainting"
+  ],
+  "author": "Stagely AI Team",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.21.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7"
+  }
+}

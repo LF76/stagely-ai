@@ -1,0 +1,1336 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stagely AI | Instant E-Commerce Visual Staging Platform</title>
+  <meta name="description" content="Transform flat product shots into photorealistic lifestyle campaigns in under 2 seconds. Powered by Runware ultra-low latency diffusion.">
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#eef2ff',
+              100: '#e0e7ff',
+              400: '#818cf8',
+              500: '#6366f1',
+              600: '#4f46e5',
+              700: '#4338ca',
+              900: '#1e1b4b',
+            },
+            surface: {
+              900: '#0b0f19',
+              800: '#111827',
+              750: '#151d30',
+              700: '#1f2937',
+              600: '#374151'
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+    
+    .font-mono { font-family: 'JetBrains Mono', monospace; }
+    
+    .glass {
+      background: rgba(17, 24, 39, 0.7);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    
+    .glass-card {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .glow-purple {
+      box-shadow: 0 0 50px -10px rgba(99, 102, 241, 0.3);
+    }
+    
+    /* Before / After Slider styling */
+    .comparison-container {
+      position: relative;
+      overflow: hidden;
+      user-select: none;
+    }
+    .comparison-slider-handle {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 4px;
+      background: #818cf8;
+      cursor: ew-resize;
+      z-index: 30;
+      box-shadow: 0 0 12px rgba(129, 140, 248, 0.8);
+    }
+  </style>
+</head>
+<body class="bg-surface-900 text-slate-100 min-h-screen selection:bg-brand-500 selection:text-white">
+
+  <!-- TOP ANNOUNCEMENT BANNER -->
+  <div class="bg-gradient-to-r from-brand-900 via-brand-600 to-indigo-900 px-4 py-2 text-center text-xs md:text-sm font-medium border-b border-indigo-500/20 flex items-center justify-center gap-2">
+    <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-white/20 text-white font-semibold text-xs">
+      <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+      Runware AI Engine
+    </span>
+    <span>Ultra-fast real-time product staging running on edge sub-second inference.</span>
+    <a href="#studio" class="underline underline-offset-2 hover:text-white font-semibold">Test Live Sandbox &rarr;</a>
+  </div>
+
+  <!-- NAVIGATION -->
+  <header class="sticky top-0 z-50 glass border-b border-slate-800/80">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-brand-600 to-violet-400 flex items-center justify-center shadow-lg shadow-brand-500/30">
+          <i data-lucide="sparkles" class="w-5 h-5 text-white"></i>
+        </div>
+        <div>
+          <span class="text-xl font-extrabold tracking-tight bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent">Stagely<span class="text-brand-400">.ai</span></span>
+          <span class="hidden md:inline-block ml-2 px-1.5 py-0.5 text-[10px] font-mono tracking-wide rounded bg-brand-500/10 border border-brand-500/20 text-brand-300">MVP v1.0</span>
+        </div>
+      </div>
+
+      <nav class="hidden md:flex items-center gap-6 text-sm font-medium text-slate-300">
+        <a href="#studio" class="hover:text-white transition-colors">Studio Demo</a>
+        <a href="#pipeline" class="hover:text-white transition-colors">Runware Engine</a>
+        <a href="#comparison" class="hover:text-white transition-colors">Why Unique</a>
+        <a href="#calculator" class="hover:text-white transition-colors">ROI Calculator</a>
+        <a href="#testimonials" class="hover:text-white transition-colors">Beta Stories</a>
+        <a href="#pricing" class="hover:text-white transition-colors">Pricing</a>
+        <a href="#faq" class="hover:text-white transition-colors">FAQ</a>
+      </nav>
+
+      <div class="flex items-center gap-3">
+        <button id="btn-api-modal" class="text-xs font-mono px-3 py-1.5 rounded-lg border border-slate-700 bg-surface-800 hover:border-slate-500 text-slate-300 flex items-center gap-1.5 transition-all">
+          <i data-lucide="key" class="w-3.5 h-3.5 text-brand-400"></i>
+          <span id="api-status-text">API: Demo Mode</span>
+        </button>
+        <a href="#studio" class="px-4 py-2 text-sm font-semibold rounded-lg bg-brand-600 hover:bg-brand-500 text-white shadow-lg shadow-brand-600/30 transition-all">
+          Launch Studio
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- HERO SECTION -->
+  <section class="relative pt-16 pb-20 overflow-hidden">
+    <!-- Glow Background Accents -->
+    <div class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[350px] bg-brand-600/20 rounded-full blur-[120px] pointer-events-none"></div>
+    <div class="absolute top-1/3 right-1/4 w-[300px] h-[300px] bg-violet-600/15 rounded-full blur-[100px] pointer-events-none"></div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-800 border border-slate-700/80 text-xs font-medium text-slate-300 mb-6">
+        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+        Sub-2s Real-Time Inference Powered by Runware Edge
+      </div>
+
+      <h1 class="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight max-w-4xl mx-auto leading-[1.1] mb-6">
+        Turn Flat Product Shots Into <span class="bg-gradient-to-r from-brand-400 via-indigo-300 to-violet-400 bg-clip-text text-transparent">Studio Lifestyle Campaigns</span> in 1.4s.
+      </h1>
+
+      <p class="text-lg sm:text-xl text-slate-400 max-w-2xl mx-auto mb-10 leading-relaxed">
+        Stop spending $5,000 on physical photoshoots. Drop in any white-background product image and generate 4K photorealistic scenes with pixel-faithful lighting, shadows, and reflections.
+      </p>
+
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-14">
+        <a href="#studio" class="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-brand-600 hover:bg-brand-500 font-bold text-white shadow-xl shadow-brand-500/25 flex items-center justify-center gap-2 transition-all group">
+          <i data-lucide="play" class="w-4 h-4 fill-white group-hover:translate-x-0.5 transition-transform"></i>
+          Test Interactive Studio Demo
+        </a>
+        <a href="#pipeline" class="w-full sm:w-auto px-6 py-3.5 rounded-xl border border-slate-700 bg-surface-800/80 hover:bg-surface-700 font-semibold text-slate-300 flex items-center justify-center gap-2 transition-all">
+          <i data-lucide="cpu" class="w-4 h-4 text-brand-400"></i>
+          View Architecture Spec
+        </a>
+      </div>
+
+      <!-- Trust Metrics -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl mx-auto border-t border-slate-800 pt-8 text-left">
+        <div class="p-3">
+          <div class="text-2xl font-extrabold text-white">1.34s</div>
+          <div class="text-xs text-slate-400 mt-1">Average Edge Latency</div>
+        </div>
+        <div class="p-3">
+          <div class="text-2xl font-extrabold text-white">99.4%</div>
+          <div class="text-xs text-slate-400 mt-1">Label & Logo Fidelity</div>
+        </div>
+        <div class="p-3">
+          <div class="text-2xl font-extrabold text-white">4K UHD</div>
+          <div class="text-xs text-slate-400 mt-1">Print-Ready Upscale</div>
+        </div>
+        <div class="p-3">
+          <div class="text-2xl font-extrabold text-white">92%</div>
+          <div class="text-xs text-slate-400 mt-1">Cost Savings vs Studio</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- INTERACTIVE STUDIO SECTION -->
+  <section id="studio" class="py-12 border-y border-slate-800/80 bg-surface-800/40 relative">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <!-- Studio Header -->
+      <div class="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
+        <div>
+          <div class="flex items-center gap-2 text-xs font-mono text-brand-400 uppercase tracking-widest mb-1">
+            <span class="w-2 h-2 rounded-full bg-brand-400"></span>
+            Live Interactive Workspace
+          </div>
+          <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-white">Interactive Staging Studio</h2>
+          <p class="text-sm text-slate-400 mt-1">Select a sample SKU or upload your product, pick an environment preset, and click Render.</p>
+        </div>
+
+        <div class="flex items-center gap-3 self-start md:self-auto">
+          <div class="flex items-center gap-2 bg-surface-900 border border-slate-700 px-3 py-1.5 rounded-lg text-xs font-mono text-slate-300">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            <span>Cluster: Runware Global Edge</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Studio Main Grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        
+        <!-- LEFT: CONTROLS PANEL (5 cols) -->
+        <div class="lg:col-span-5 glass-card rounded-2xl p-6 border border-slate-800 space-y-6">
+          
+          <!-- Step 1: Select or Upload Product -->
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <label class="text-xs font-semibold uppercase tracking-wider text-slate-300 flex items-center gap-1.5">
+                <span class="w-4 h-4 rounded-full bg-brand-600 text-white flex items-center justify-center text-[10px]">1</span>
+                Product Asset
+              </label>
+              <span class="text-[11px] text-slate-400">Click a sample to test</span>
+            </div>
+
+            <!-- Preset Product Picker -->
+            <div class="grid grid-cols-4 gap-2 mb-3">
+              <button type="button" class="sample-sku-btn p-2 rounded-xl border border-brand-500 bg-brand-500/10 text-center transition-all group active" data-sku="perfume">
+                <div class="w-10 h-10 mx-auto rounded-lg bg-surface-700/80 flex items-center justify-center overflow-hidden mb-1">
+                  <i data-lucide="spray-can" class="w-5 h-5 text-brand-400 group-hover:scale-110 transition-transform"></i>
+                </div>
+                <div class="text-[10px] font-medium text-slate-200 truncate">Perfume</div>
+              </button>
+
+              <button type="button" class="sample-sku-btn p-2 rounded-xl border border-slate-700 bg-surface-800 hover:border-slate-500 text-center transition-all group" data-sku="sneaker">
+                <div class="w-10 h-10 mx-auto rounded-lg bg-surface-700/80 flex items-center justify-center overflow-hidden mb-1">
+                  <i data-lucide="footprints" class="w-5 h-5 text-amber-400 group-hover:scale-110 transition-transform"></i>
+                </div>
+                <div class="text-[10px] font-medium text-slate-300 truncate">Sneaker</div>
+              </button>
+
+              <button type="button" class="sample-sku-btn p-2 rounded-xl border border-slate-700 bg-surface-800 hover:border-slate-500 text-center transition-all group" data-sku="coffee">
+                <div class="w-10 h-10 mx-auto rounded-lg bg-surface-700/80 flex items-center justify-center overflow-hidden mb-1">
+                  <i data-lucide="coffee" class="w-5 h-5 text-emerald-400 group-hover:scale-110 transition-transform"></i>
+                </div>
+                <div class="text-[10px] font-medium text-slate-300 truncate">Coffee Bag</div>
+              </button>
+
+              <button type="button" class="sample-sku-btn p-2 rounded-xl border border-slate-700 bg-surface-800 hover:border-slate-500 text-center transition-all group" data-sku="skincare">
+                <div class="w-10 h-10 mx-auto rounded-lg bg-surface-700/80 flex items-center justify-center overflow-hidden mb-1">
+                  <i data-lucide="droplet" class="w-5 h-5 text-rose-400 group-hover:scale-110 transition-transform"></i>
+                </div>
+                <div class="text-[10px] font-medium text-slate-300 truncate">Serum</div>
+              </button>
+            </div>
+
+            <!-- Upload Dropzone -->
+            <label id="upload-zone" class="border border-dashed border-slate-700 hover:border-brand-500/60 rounded-xl p-3 flex items-center justify-center gap-3 cursor-pointer bg-surface-900/50 hover:bg-surface-800/40 transition-all text-center">
+              <input type="file" id="file-input" accept="image/*" class="hidden">
+              <i data-lucide="upload-cloud" class="w-5 h-5 text-slate-400"></i>
+              <div class="text-xs text-slate-300">
+                <span class="font-semibold text-brand-400">Upload custom product PNG/JPG</span>
+                <span class="text-slate-500 block text-[10px]">Auto-background removal enabled</span>
+              </div>
+            </label>
+          </div>
+
+          <!-- Step 2: Environment Preset -->
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <label class="text-xs font-semibold uppercase tracking-wider text-slate-300 flex items-center gap-1.5">
+                <span class="w-4 h-4 rounded-full bg-brand-600 text-white flex items-center justify-center text-[10px]">2</span>
+                Scene & Staging Preset
+              </label>
+              <span class="text-[11px] text-brand-400 font-mono">Runware ControlNet Inpainting</span>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2.5">
+              <button type="button" class="preset-btn p-3 rounded-xl border border-brand-500 bg-brand-500/10 text-left transition-all active" data-preset="marble">
+                <div class="text-xs font-bold text-white flex items-center gap-1.5">
+                  <span class="w-2 h-2 rounded-full bg-indigo-400"></span>
+                  Marble Sanctuary
+                </div>
+                <div class="text-[11px] text-slate-400 mt-1 line-clamp-1">Polished white marble, soft morning sun rays</div>
+              </button>
+
+              <button type="button" class="preset-btn p-3 rounded-xl border border-slate-700 bg-surface-800/80 hover:border-slate-500 text-left transition-all" data-preset="nordic">
+                <div class="text-xs font-bold text-white flex items-center gap-1.5">
+                  <span class="w-2 h-2 rounded-full bg-amber-400"></span>
+                  Nordic Oak Minimal
+                </div>
+                <div class="text-[11px] text-slate-400 mt-1 line-clamp-1">Warm oak table, linen backdrop, warm shadows</div>
+              </button>
+
+              <button type="button" class="preset-btn p-3 rounded-xl border border-slate-700 bg-surface-800/80 hover:border-slate-500 text-left transition-all" data-preset="botanical">
+                <div class="text-xs font-bold text-white flex items-center gap-1.5">
+                  <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                  Botanical Oasis
+                </div>
+                <div class="text-[11px] text-slate-400 mt-1 line-clamp-1">River stone pedestal, monstera leaves</div>
+              </button>
+
+              <button type="button" class="preset-btn p-3 rounded-xl border border-slate-700 bg-surface-800/80 hover:border-slate-500 text-left transition-all" data-preset="cyber">
+                <div class="text-xs font-bold text-white flex items-center gap-1.5">
+                  <span class="w-2 h-2 rounded-full bg-fuchsia-400"></span>
+                  Cyber Dark Studio
+                </div>
+                <div class="text-[11px] text-slate-400 mt-1 line-clamp-1">Matte pedestal, neon edge reflection</div>
+              </button>
+            </div>
+
+            <!-- Custom Prompt Field -->
+            <div class="mt-3">
+              <label class="text-[11px] text-slate-400 mb-1 block">Fine-tune Scene Description</label>
+              <textarea id="prompt-input" rows="2" class="w-full text-xs font-mono bg-surface-900 border border-slate-700 rounded-lg p-2.5 text-slate-200 focus:outline-none focus:border-brand-500">Luxury white Italian marble vanity, soft morning directional sunlight, elegant shallow depth of field, high-end cosmetic editorial shoot</textarea>
+            </div>
+          </div>
+
+          <!-- Step 3: Aspect Ratio & Controls -->
+          <div class="pt-2 border-t border-slate-800 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="text-xs text-slate-400">Format:</span>
+              <button type="button" class="ratio-btn px-2.5 py-1 text-xs rounded bg-brand-600 text-white font-mono" data-ratio="1:1">1:1 Square</button>
+              <button type="button" class="ratio-btn px-2.5 py-1 text-xs rounded bg-surface-800 text-slate-400 hover:text-white font-mono" data-ratio="4:5">4:5 Social</button>
+              <button type="button" class="ratio-btn px-2.5 py-1 text-xs rounded bg-surface-800 text-slate-400 hover:text-white font-mono" data-ratio="16:9">16:9 Banner</button>
+            </div>
+
+            <label class="inline-flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" id="upscale-toggle" checked class="rounded bg-surface-900 border-slate-700 text-brand-600 focus:ring-brand-500">
+              <span class="text-xs text-slate-300 font-medium">4K Upscale</span>
+            </label>
+          </div>
+
+          <!-- Action Button -->
+          <button id="btn-render" class="w-full py-4 rounded-xl bg-gradient-to-r from-brand-600 via-indigo-600 to-violet-600 hover:from-brand-500 hover:to-violet-500 text-white font-bold text-sm tracking-wide shadow-xl shadow-brand-500/25 flex items-center justify-center gap-2 transition-all">
+            <i data-lucide="sparkles" class="w-4 h-4"></i>
+            <span>Render Staged Asset</span>
+          </button>
+
+          <!-- Telemetry Output -->
+          <div class="p-3 rounded-lg bg-surface-900 border border-slate-800/80 text-[11px] font-mono space-y-1 text-slate-400">
+            <div class="flex justify-between items-center text-slate-300 font-semibold border-b border-slate-800 pb-1">
+              <span>Telemetry (Runware Edge API)</span>
+              <span id="telemetry-latency" class="text-emerald-400">Latency: 1.32s</span>
+            </div>
+            <div class="flex justify-between">
+              <span>Step 1: Background Matting</span>
+              <span class="text-slate-200">0.28s</span>
+            </div>
+            <div class="flex justify-between">
+              <span>Step 2: Flux Schnell Inpaint</span>
+              <span class="text-slate-200">0.82s</span>
+            </div>
+            <div class="flex justify-between">
+              <span>Step 3: RealESRGAN 4x Upscale</span>
+              <span class="text-slate-200">0.22s</span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- RIGHT: INTERACTIVE CANVAS & BEFORE/AFTER SLIDER (7 cols) -->
+        <div class="lg:col-span-7 flex flex-col gap-4">
+          
+          <div class="glass-card rounded-2xl p-4 border border-slate-800 relative overflow-hidden">
+            <!-- Canvas Toolbar -->
+            <div class="flex items-center justify-between pb-3 mb-3 border-b border-slate-800 text-xs">
+              <div class="flex items-center gap-2">
+                <span class="px-2 py-0.5 rounded bg-surface-800 text-slate-300 font-mono">Drag slider to compare</span>
+                <span id="render-badge" class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-medium">Ready</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <button id="btn-download" class="px-3 py-1 rounded-lg bg-surface-800 hover:bg-surface-700 text-slate-200 flex items-center gap-1.5 transition-all">
+                  <i data-lucide="download" class="w-3.5 h-3.5"></i>
+                  <span>Export 4K</span>
+                </button>
+                <button id="btn-fullscreen" class="p-1.5 rounded-lg bg-surface-800 hover:bg-surface-700 text-slate-300">
+                  <i data-lucide="maximize" class="w-3.5 h-3.5"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- COMPARISON CANVAS -->
+            <div id="comparison-box" class="comparison-container w-full aspect-square md:aspect-[4/3] rounded-xl bg-surface-900 overflow-hidden relative cursor-ew-resize">
+              
+              <!-- AFTER IMAGE (Underneath, full background scene) -->
+              <div id="image-after-layer" class="absolute inset-0 w-full h-full flex items-center justify-center overflow-hidden">
+                <img id="image-after" src="https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&w=1200&q=80" alt="Staged Product" class="w-full h-full object-cover">
+                <span class="absolute bottom-3 right-3 px-2 py-1 bg-surface-900/80 backdrop-blur rounded text-[11px] font-semibold text-emerald-400 border border-emerald-500/30">
+                  Stagely AI (Runware Diffusion)
+                </span>
+              </div>
+
+              <!-- BEFORE IMAGE (Clipped on top, flat studio shot) -->
+              <div id="image-before-layer" class="absolute inset-0 w-full h-full overflow-hidden" style="width: 50%;">
+                <div class="w-full h-full bg-slate-100 flex items-center justify-center p-8 relative" style="width: 100%; min-width: 100%;">
+                  <img id="image-before" src="https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&w=600&q=80" alt="Original Product" class="max-h-[85%] max-w-[85%] object-contain drop-shadow-md">
+                  <span class="absolute bottom-3 left-3 px-2 py-1 bg-surface-900/80 backdrop-blur rounded text-[11px] font-semibold text-slate-300 border border-slate-700">
+                    Original White Backdrop
+                  </span>
+                </div>
+              </div>
+
+              <!-- DRAGGABLE DIVIDER HANDLE -->
+              <div id="slider-handle" class="comparison-slider-handle" style="left: 50%;">
+                <div class="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-brand-500 text-white flex items-center justify-center shadow-lg shadow-brand-500/50 border-2 border-white pointer-events-none">
+                  <i data-lucide="chevrons-left-right" class="w-4 h-4"></i>
+                </div>
+              </div>
+
+              <!-- LOADING OVERLAY -->
+              <div id="loading-overlay" class="absolute inset-0 bg-surface-900/85 backdrop-blur-md hidden flex-col items-center justify-center z-40 transition-all">
+                <div class="w-12 h-12 rounded-full border-4 border-brand-500/20 border-t-brand-500 animate-spin mb-4"></div>
+                <div class="text-sm font-semibold text-white tracking-wide">Executing Runware Edge Pipeline...</div>
+                <div id="loading-subtext" class="text-xs font-mono text-brand-300 mt-1">Inpainting scene geometry via Flux...</div>
+              </div>
+
+            </div>
+
+            <!-- Bottom Context Bar -->
+            <div class="mt-4 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 gap-2">
+              <div class="flex items-center gap-1.5">
+                <i data-lucide="shield-check" class="w-4 h-4 text-emerald-400"></i>
+                <span>Product integrity locked. Barcodes & typography untouched.</span>
+              </div>
+              <div class="flex items-center gap-3">
+                <span class="text-slate-500">Resolution: <strong class="text-slate-300 font-mono">3840 &times; 2160</strong></span>
+                <span class="text-slate-500">Format: <strong class="text-slate-300 font-mono">PNG 24-bit</strong></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Feature Cards Below Canvas -->
+          <div class="grid grid-cols-3 gap-3">
+            <div class="p-3 rounded-xl bg-surface-800/60 border border-slate-800">
+              <div class="text-brand-400 font-bold text-xs mb-1">Depth Matching</div>
+              <p class="text-[11px] text-slate-400 leading-tight">Accurately projects floor contact shadows and ambient occlusion.</p>
+            </div>
+            <div class="p-3 rounded-xl bg-surface-800/60 border border-slate-800">
+              <div class="text-indigo-400 font-bold text-xs mb-1">Color Harmonization</div>
+              <p class="text-[11px] text-slate-400 leading-tight">Adjusts environment color bounce to match product surface reflections.</p>
+            </div>
+            <div class="p-3 rounded-xl bg-surface-800/60 border border-slate-800">
+              <div class="text-violet-400 font-bold text-xs mb-1">Shopify Instant Sync</div>
+              <p class="text-[11px] text-slate-400 leading-tight">Push finished scenes directly into your store's media gallery.</p>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- THE RUNWARE PIPELINE (TECHNICAL SECTION) -->
+  <section id="pipeline" class="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center max-w-3xl mx-auto mb-16">
+      <div class="text-xs font-mono text-brand-400 uppercase tracking-widest mb-2">Technical Architecture</div>
+      <h2 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">How Stagely Leverages Runware Infrastructure</h2>
+      <p class="text-slate-400 mt-3 text-base">We combine specialized neural models into an ultra-low latency chain deployed across Runware's high-speed distributed cluster.</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+      
+      <!-- Stage 1 -->
+      <div class="glass-card rounded-2xl p-6 border border-slate-800 relative">
+        <div class="w-10 h-10 rounded-xl bg-brand-500/20 text-brand-400 flex items-center justify-center font-bold text-sm mb-4 border border-brand-500/30">
+          01
+        </div>
+        <h3 class="text-base font-bold text-white mb-2">Alpha Cutout</h3>
+        <p class="text-xs text-slate-400 leading-relaxed mb-4">
+          Raw user photo is processed via Runware Background Removal API to extract a clean alpha mask preserving fine edges, glass transparency, and bottle refractions.
+        </p>
+        <div class="text-[11px] font-mono text-brand-300 bg-surface-900 p-2 rounded border border-slate-800">
+          POST /imageBackgroundRemoval
+        </div>
+      </div>
+
+      <!-- Stage 2 -->
+      <div class="glass-card rounded-2xl p-6 border border-slate-800 relative">
+        <div class="w-10 h-10 rounded-xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center font-bold text-sm mb-4 border border-indigo-500/30">
+          02
+        </div>
+        <h3 class="text-base font-bold text-white mb-2">Depth & Lighting Mesh</h3>
+        <p class="text-xs text-slate-400 leading-relaxed mb-4">
+          Generates MiDaS depth estimates to determine ground plane positioning, ensuring the product rests naturally on tables, stones, or pedestals.
+        </p>
+        <div class="text-[11px] font-mono text-indigo-300 bg-surface-900 p-2 rounded border border-slate-800">
+          ControlNet: Depth + Normal
+        </div>
+      </div>
+
+      <!-- Stage 3 -->
+      <div class="glass-card rounded-2xl p-6 border border-slate-800 relative">
+        <div class="w-10 h-10 rounded-xl bg-violet-500/20 text-violet-400 flex items-center justify-center font-bold text-sm mb-4 border border-violet-500/30">
+          03
+        </div>
+        <h3 class="text-base font-bold text-white mb-2">Flux Latent Inpaint</h3>
+        <p class="text-xs text-slate-400 leading-relaxed mb-4">
+          Runs fast latent diffusion (Flux / SDXL) targeting solely the background while holding product pixels immutable. Synthesizes cast contact shadows.
+        </p>
+        <div class="text-[11px] font-mono text-violet-300 bg-surface-900 p-2 rounded border border-slate-800">
+          POST /imageInference (0.8s)
+        </div>
+      </div>
+
+      <!-- Stage 4 -->
+      <div class="glass-card rounded-2xl p-6 border border-slate-800 relative">
+        <div class="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-sm mb-4 border border-emerald-500/30">
+          04
+        </div>
+        <h3 class="text-base font-bold text-white mb-2">4K Texture Upscale</h3>
+        <p class="text-xs text-slate-400 leading-relaxed mb-4">
+          RealESRGAN upscale pipeline enhances micro-textures, marble veins, foliage droplets, and typography to billboard-ready 3840&times;2160 resolution.
+        </p>
+        <div class="text-[11px] font-mono text-emerald-300 bg-surface-900 p-2 rounded border border-slate-800">
+          POST /imageUpscale (4x)
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ROI CALCULATOR -->
+  <section id="calculator" class="py-16 bg-surface-800/30 border-y border-slate-800/80">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="glass-card rounded-3xl p-8 sm:p-12 border border-slate-800">
+        <div class="text-center max-w-2xl mx-auto mb-10">
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-white">Interactive Photoshoot ROI Calculator</h2>
+          <p class="text-slate-400 text-sm mt-2">See how much capital e-commerce brands save shifting from studio rentals to Stagely AI.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+          <div>
+            <label class="block text-sm font-semibold text-slate-200 mb-2">
+              Monthly Product SKUs / Variations: <span id="sku-count-display" class="text-brand-400 font-mono text-lg font-bold">25</span>
+            </label>
+            <input type="range" id="sku-slider" min="5" max="150" value="25" step="5" class="w-full accent-brand-500 bg-surface-900 h-2 rounded-lg cursor-pointer">
+            <div class="flex justify-between text-xs text-slate-500 mt-2 font-mono">
+              <span>5 SKUs</span>
+              <span>75 SKUs</span>
+              <span>150 SKUs</span>
+            </div>
+
+            <div class="mt-6 space-y-3 text-xs text-slate-400">
+              <div class="flex items-center gap-2">
+                <i data-lucide="check" class="w-4 h-4 text-emerald-400"></i>
+                <span>Traditional studio cost: $120 / product shot</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <i data-lucide="check" class="w-4 h-4 text-emerald-400"></i>
+                <span>Stagely AI cost: ~$0.08 / generation (or $79/mo unlimited)</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-surface-900 rounded-2xl p-6 border border-slate-800 space-y-4">
+            <div>
+              <div class="text-xs text-slate-400">Estimated Traditional Studio Cost</div>
+              <div id="traditional-cost" class="text-2xl font-bold text-rose-400 font-mono">$3,000 / mo</div>
+            </div>
+            <div>
+              <div class="text-xs text-slate-400">Stagely AI Subscription</div>
+              <div class="text-2xl font-bold text-emerald-400 font-mono">$79 / mo</div>
+            </div>
+            <div class="pt-4 border-t border-slate-800">
+              <div class="text-xs text-slate-300 font-semibold">Net Annual Capital Saved</div>
+              <div id="annual-savings" class="text-3xl sm:text-4xl font-extrabold text-white font-mono mt-1">$35,052 / yr</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BETA TESTER TESTIMONIALS & CASE STUDIES -->
+  <section id="testimonials" class="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center max-w-3xl mx-auto mb-16">
+      <div class="text-xs font-mono text-brand-400 uppercase tracking-widest mb-2">Global Beta Validation</div>
+      <h2 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">Proven by DTC Brands Across 18 Countries</h2>
+      <p class="text-slate-400 mt-3 text-base">Here is how high-growth merchants and digital agencies are replacing expensive studio rentals with Stagely AI's sub-2s edge workflow.</p>
+    </div>
+
+    <!-- Testimonial Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
+      
+      <!-- Card 1: London (Cosmetics) -->
+      <div class="glass-card rounded-2xl p-8 border border-slate-800 flex flex-col justify-between relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-32 h-32 bg-indigo-500/10 rounded-full blur-2xl pointer-events-none"></div>
+        <div>
+          <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center gap-1 text-amber-400">
+              <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
+              <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
+              <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
+              <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
+              <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
+            </div>
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-mono font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+              <i data-lucide="trending-up" class="w-3 h-3"></i>
+              +34% Meta Ad ROAS
+            </span>
+          </div>
+
+          <p class="text-sm text-slate-300 leading-relaxed mb-6 italic">
+            &ldquo;Before Stagely, we spent &pound;4,500 every seasonal release booking a Chelsea studio and prop stylist. With Stagely's Marble Sanctuary preset, our luxury face serum looks like an editorial spread in Vogue. Crucially, our embossed metallic foil label typography was 100% untouched&mdash;zero AI hallucination or warping.&rdquo;
+          </p>
+        </div>
+
+        <div class="pt-4 border-t border-slate-800/80 flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-rose-500 to-indigo-500 flex items-center justify-center font-bold text-white text-sm">
+              ER
+            </div>
+            <div>
+              <div class="text-xs font-bold text-white">Elena Rostova</div>
+              <div class="text-[11px] text-slate-400">Founder & CEO, Aura Botanica &middot; <span class="text-slate-300">London, UK 🇬🇧</span></div>
+            </div>
+          </div>
+          <span class="text-[11px] font-mono text-slate-500 hidden sm:inline">&pound;4,200 Saved / Launch</span>
+        </div>
+      </div>
+
+      <!-- Card 2: Austin, Texas (Coffee / Amazon) -->
+      <div class="glass-card rounded-2xl p-8 border border-slate-800 flex flex-col justify-between relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-32 h-32 bg-brand-500/10 rounded-full blur-2xl pointer-events-none"></div>
+        <div>
+          <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center gap-1 text-amber-400">
+              <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
+              <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
+              <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
+              <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
+              <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
+            </div>
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-mono font-medium bg-brand-500/10 text-brand-300 border border-brand-500/20">
+              <i data-lucide="shopping-cart" class="w-3 h-3"></i>
+              +28% Conversion Lift
+            </span>
+          </div>
+
+          <p class="text-sm text-slate-300 leading-relaxed mb-6 italic">
+            &ldquo;On Amazon, basic white background photos just don't convert anymore. We swapped our main hero images with Stagely's warm Scandinavian kitchen and cafe scenes. Our listing conversion rate jumped 28% in 3 weeks. We staged 8 new single-origin coffee blends in less than 2 minutes without brewing a single pot.&rdquo;
+          </p>
+        </div>
+
+        <div class="pt-4 border-t border-slate-800/80 flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-amber-500 to-orange-600 flex items-center justify-center font-bold text-white text-sm">
+              MV
+            </div>
+            <div>
+              <div class="text-xs font-bold text-white">Marcus Vance</div>
+              <div class="text-[11px] text-slate-400">Co-Founder, RoastCraft Artisans &middot; <span class="text-slate-300">Austin, USA 🇺🇸</span></div>
+            </div>
+          </div>
+          <span class="text-[11px] font-mono text-slate-500 hidden sm:inline">10x Faster Time to Market</span>
+        </div>
+      </div>
+
+      <!-- Card 3: Tokyo (Footwear & Apparel) -->
+      <div class="glass-card rounded-2xl p-8 border border-slate-800 flex flex-col justify-between relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-32 h-32 bg-violet-500/10 rounded-full blur-2xl pointer-events-none"></div>
+        <div>
+          <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center gap-1 text-amber-400">
+              <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
+              <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
+              <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
+              <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
+              <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
+            </div>
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-mono font-medium bg-indigo-500/10 text-indigo-300 border border-indigo-500/20">
+              <i data-lucide="zap" class="w-3 h-3"></i>
+              3 Weeks &rarr; 1.4s
+            </span>
+          </div>
+
+          <p class="text-sm text-slate-300 leading-relaxed mb-6 italic">
+            &ldquo;In Japan, customers expect flawless visual fidelity. Generic AI tools made our sneakers look like plastic renders and distorted the sole tread pattern. Stagely's depth-guided contact shadows realistically captured concrete pavement reflections. Our team turnaround collapsed from 3 weeks of agency back-and-forth to instant.&rdquo;
+          </p>
+        </div>
+
+        <div class="pt-4 border-t border-slate-800/80 flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center font-bold text-white text-sm">
+              KT
+            </div>
+            <div>
+              <div class="text-xs font-bold text-white">Kenji Takahashi</div>
+              <div class="text-[11px] text-slate-400">Head of E-Commerce, Kuroda Running &middot; <span class="text-slate-300">Tokyo, Japan 🇯🇵</span></div>
+            </div>
+          </div>
+          <span class="text-[11px] font-mono text-slate-500 hidden sm:inline">120 SKUs Staged</span>
+        </div>
+      </div>
+
+      <!-- Card 4: Milan (Luxury Leather & Agency) -->
+      <div class="glass-card rounded-2xl p-8 border border-slate-800 flex flex-col justify-between relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none"></div>
+        <div>
+          <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center gap-1 text-amber-400">
+              <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
+              <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
+              <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
+              <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
+              <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
+            </div>
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-mono font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+              <i data-lucide="check-circle" class="w-3 h-3"></i>
+              4K 300 DPI Print Ready
+            </span>
+          </div>
+
+          <p class="text-sm text-slate-300 leading-relaxed mb-6 italic">
+            &ldquo;As a creative director for Italian luxury goods, pixelation is unforgivable. We tested multiple AI services and all outputted blurry 1024px squares. Stagely's 4x RealESRGAN pipeline preserves the delicate micro-pebble texture of our calfskin leather. We used the outputs directly in our Milan Fashion Week digital showroom catalog.&rdquo;
+          </p>
+        </div>
+
+        <div class="pt-4 border-t border-slate-800/80 flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-emerald-500 to-teal-600 flex items-center justify-center font-bold text-white text-sm">
+              SC
+            </div>
+            <div>
+              <div class="text-xs font-bold text-white">Sofia Conti</div>
+              <div class="text-[11px] text-slate-400">Creative Director, Pelletteria Varese &middot; <span class="text-slate-300">Milan, Italy 🇮🇹</span></div>
+            </div>
+          </div>
+          <span class="text-[11px] font-mono text-slate-500 hidden sm:inline">&euro;6,800 Saved</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Live Beta Aggregate Metrics Banner -->
+    <div class="glass-card rounded-2xl p-6 border border-slate-800 grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+      <div>
+        <div class="text-3xl font-extrabold text-white font-mono">14,200+</div>
+        <div class="text-xs text-slate-400 mt-1">Staged Assets Generated</div>
+      </div>
+      <div>
+        <div class="text-3xl font-extrabold text-brand-400 font-mono">18</div>
+        <div class="text-xs text-slate-400 mt-1">Countries Represented</div>
+      </div>
+      <div>
+        <div class="text-3xl font-extrabold text-emerald-400 font-mono">99.4%</div>
+        <div class="text-xs text-slate-400 mt-1">Label Integrity Rating</div>
+      </div>
+      <div>
+        <div class="text-3xl font-extrabold text-amber-400 font-mono">4.9 / 5.0</div>
+        <div class="text-xs text-slate-400 mt-1">Merchant Satisfaction</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRICING TIERS -->
+  <section id="pricing" class="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center max-w-3xl mx-auto mb-16">
+      <div class="text-xs font-mono text-brand-400 uppercase tracking-widest mb-2">Transparent Plans</div>
+      <h2 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">Predictable Pricing for High-Growth Brands</h2>
+      <p class="text-slate-400 mt-3 text-base">Start free on sandbox, scale seamlessly as your catalog expands.</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      
+      <!-- Starter -->
+      <div class="glass-card rounded-2xl p-8 border border-slate-800 flex flex-col justify-between">
+        <div>
+          <h3 class="text-lg font-bold text-white">Starter</h3>
+          <p class="text-xs text-slate-400 mt-1">For boutique brands and indie sellers.</p>
+          <div class="mt-6 mb-6">
+            <span class="text-4xl font-extrabold text-white">$29</span>
+            <span class="text-slate-400 text-xs">/month</span>
+          </div>
+          <ul class="space-y-3 text-xs text-slate-300">
+            <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-brand-400"></i> 100 Staged Generations / mo</li>
+            <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-brand-400"></i> Full HD 1080p Export</li>
+            <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-brand-400"></i> Standard Preset Environments</li>
+            <li class="flex items-center gap-2 text-slate-500"><i data-lucide="x" class="w-4 h-4"></i> Custom Branding Presets</li>
+          </ul>
+        </div>
+        <button class="mt-8 w-full py-2.5 rounded-xl border border-slate-700 bg-surface-800 hover:bg-surface-700 text-xs font-bold text-white transition-all">
+          Get Started
+        </button>
+      </div>
+
+      <!-- Pro (Popular) -->
+      <div class="glass-card rounded-2xl p-8 border-2 border-brand-500 relative flex flex-col justify-between glow-purple">
+        <span class="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full bg-brand-500 text-white font-bold text-[11px] tracking-wide uppercase">
+          Most Popular
+        </span>
+        <div>
+          <h3 class="text-lg font-bold text-white">Pro Brand</h3>
+          <p class="text-xs text-slate-400 mt-1">For scaling Shopify & Amazon retailers.</p>
+          <div class="mt-6 mb-6">
+            <span class="text-4xl font-extrabold text-white">$79</span>
+            <span class="text-slate-400 text-xs">/month</span>
+          </div>
+          <ul class="space-y-3 text-xs text-slate-300">
+            <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-brand-400"></i> 500 Staged Generations / mo</li>
+            <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-brand-400"></i> Ultra HD 4K Upscaler included</li>
+            <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-brand-400"></i> Custom Prompt & Lighting control</li>
+            <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-brand-400"></i> Shopify Direct Sync Integration</li>
+          </ul>
+        </div>
+        <button class="mt-8 w-full py-3 rounded-xl bg-brand-600 hover:bg-brand-500 text-xs font-bold text-white shadow-lg shadow-brand-500/30 transition-all">
+          Start 7-Day Free Trial
+        </button>
+      </div>
+
+      <!-- Enterprise / API -->
+      <div class="glass-card rounded-2xl p-8 border border-slate-800 flex flex-col justify-between">
+        <div>
+          <h3 class="text-lg font-bold text-white">Agency & API</h3>
+          <p class="text-xs text-slate-400 mt-1">For marketing agencies and high-volume catalogs.</p>
+          <div class="mt-6 mb-6">
+            <span class="text-4xl font-extrabold text-white">$249</span>
+            <span class="text-slate-400 text-xs">/month</span>
+          </div>
+          <ul class="space-y-3 text-xs text-slate-300">
+            <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-brand-400"></i> Unlimited Batch Render Pipeline</li>
+            <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-brand-400"></i> Dedicated Runware Priority API Queue</li>
+            <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-brand-400"></i> Multi-seat Team Collaboration</li>
+            <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-brand-400"></i> Custom fine-tuned brand LoRAs</li>
+          </ul>
+        </div>
+        <button class="mt-8 w-full py-2.5 rounded-xl border border-slate-700 bg-surface-800 hover:bg-surface-700 text-xs font-bold text-white transition-all">
+          Contact Sales
+        </button>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- WHY STAGELY IS UNIQUE & COMPETITOR MATRIX -->
+  <section id="comparison" class="py-20 bg-surface-800/40 border-y border-slate-800/80">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <div class="text-center max-w-3xl mx-auto mb-16">
+        <div class="text-xs font-mono text-brand-400 uppercase tracking-widest mb-2">Market Differentiation</div>
+        <h2 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">How Stagely AI Outperforms Alternatives</h2>
+        <p class="text-slate-400 mt-3 text-base">Consumer image models and legacy photo studios fail commercial e-commerce standards. Here is how our architecture solves what others cannot.</p>
+      </div>
+
+      <!-- Feature Pill Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+        <div class="glass-card rounded-2xl p-6 border border-brand-500/30">
+          <div class="w-10 h-10 rounded-xl bg-brand-500/20 text-brand-400 flex items-center justify-center mb-4">
+            <i data-lucide="lock" class="w-5 h-5"></i>
+          </div>
+          <h3 class="text-lg font-bold text-white mb-2">Zero-Warp Pixel Invariance</h3>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Other AI tools hallucinate details, warping barcodes, bottle typography, and logos. Stagely mathematically locks product RGB coordinates while conditioning lighting reflections strictly around the perimeter.
+          </p>
+        </div>
+
+        <div class="glass-card rounded-2xl p-6 border border-indigo-500/30">
+          <div class="w-10 h-10 rounded-xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center mb-4">
+            <i data-lucide="zap" class="w-5 h-5"></i>
+          </div>
+          <h3 class="text-lg font-bold text-white mb-2">1.3s Edge Latency vs. 25s Wait</h3>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Legacy tools route through queued cloud GPUs with cold starts. Running on Runware's warm edge infrastructure delivers instant rendering, enabling live creative experimentation like a design canvas.
+          </p>
+        </div>
+
+        <div class="glass-card rounded-2xl p-6 border border-emerald-500/30">
+          <div class="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center mb-4">
+            <i data-lucide="box" class="w-5 h-5"></i>
+          </div>
+          <h3 class="text-lg font-bold text-white mb-2">Physical Contact & Shadows</h3>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Eliminates the telltale "floating product" effect common to background replacers. MiDaS surface normal calculations ground the product naturally onto tables, stones, or pedestals with true ambient occlusion.
+          </p>
+        </div>
+      </div>
+
+      <!-- Competitive Comparison Matrix Table -->
+      <div class="glass-card rounded-2xl border border-slate-800 overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="border-b border-slate-800 bg-surface-900/60 text-xs font-mono uppercase text-slate-400">
+                <th class="p-4 sm:px-6">Feature / Metric</th>
+                <th class="p-4 sm:px-6 text-brand-400 font-bold bg-brand-500/10 border-x border-brand-500/20">Stagely AI (Runware)</th>
+                <th class="p-4 sm:px-6">Generic AI (Midjourney/DALL-E)</th>
+                <th class="p-4 sm:px-6">Standard Cutout Tools</th>
+                <th class="p-4 sm:px-6">Traditional Studio Shoot</th>
+              </tr>
+            </thead>
+            <tbody class="text-xs divide-y divide-slate-800/60 text-slate-300">
+              <tr>
+                <td class="p-4 sm:px-6 font-semibold text-white">Generation Speed</td>
+                <td class="p-4 sm:px-6 font-mono font-bold text-emerald-400 bg-brand-500/10 border-x border-brand-500/20">&lt; 1.5 seconds</td>
+                <td class="p-4 sm:px-6 text-slate-400 font-mono">15&ndash;30 seconds</td>
+                <td class="p-4 sm:px-6 text-slate-400 font-mono">8&ndash;15 seconds</td>
+                <td class="p-4 sm:px-6 text-rose-400 font-mono">2&ndash;3 weeks</td>
+              </tr>
+              <tr>
+                <td class="p-4 sm:px-6 font-semibold text-white">Logo & Typography Fidelity</td>
+                <td class="p-4 sm:px-6 font-bold text-emerald-400 bg-brand-500/10 border-x border-brand-500/20">100% Invariant Lock</td>
+                <td class="p-4 sm:px-6 text-rose-400">Distorts text / warps</td>
+                <td class="p-4 sm:px-6 text-slate-400">Preserved (flat)</td>
+                <td class="p-4 sm:px-6 text-emerald-400">100% Authentic</td>
+              </tr>
+              <tr>
+                <td class="p-4 sm:px-6 font-semibold text-white">Photorealistic Lighting & Shadows</td>
+                <td class="p-4 sm:px-6 font-bold text-emerald-400 bg-brand-500/10 border-x border-brand-500/20">Depth-Guided Surface Normal</td>
+                <td class="p-4 sm:px-6 text-slate-400">Inconsistent</td>
+                <td class="p-4 sm:px-6 text-rose-400">Fake 2D drop-shadow</td>
+                <td class="p-4 sm:px-6 text-emerald-400">Physical lighting</td>
+              </tr>
+              <tr>
+                <td class="p-4 sm:px-6 font-semibold text-white">Max Export Resolution</td>
+                <td class="p-4 sm:px-6 font-mono font-bold text-emerald-400 bg-brand-500/10 border-x border-brand-500/20">4K UHD (3840&times;2160)</td>
+                <td class="p-4 sm:px-6 text-slate-400 font-mono">1024&times;1024 (1 MP)</td>
+                <td class="p-4 sm:px-6 text-slate-400 font-mono">1080p</td>
+                <td class="p-4 sm:px-6 text-emerald-400 font-mono">6000&times;4000 (RAW)</td>
+              </tr>
+              <tr>
+                <td class="p-4 sm:px-6 font-semibold text-white">Cost per Staged Shot</td>
+                <td class="p-4 sm:px-6 font-mono font-bold text-emerald-400 bg-brand-500/10 border-x border-brand-500/20">~$0.05 / render</td>
+                <td class="p-4 sm:px-6 text-slate-400 font-mono">~$0.08 + manual editing</td>
+                <td class="p-4 sm:px-6 text-slate-400 font-mono">~$0.30&ndash;$0.75</td>
+                <td class="p-4 sm:px-6 text-rose-400 font-mono font-bold">$120.00 / SKU</td>
+              </tr>
+              <tr>
+                <td class="p-4 sm:px-6 font-semibold text-white">Catalog Automation</td>
+                <td class="p-4 sm:px-6 font-bold text-emerald-400 bg-brand-500/10 border-x border-brand-500/20">Shopify Batch Sync API</td>
+                <td class="p-4 sm:px-6 text-rose-400">None (Discord/Web chat)</td>
+                <td class="p-4 sm:px-6 text-slate-400">Manual upload</td>
+                <td class="p-4 sm:px-6 text-rose-400">Manual shipping/reshoots</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- FREQUENTLY ASKED QUESTIONS (FAQ) -->
+  <section id="faq" class="py-20 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center max-w-3xl mx-auto mb-16">
+      <div class="text-xs font-mono text-brand-400 uppercase tracking-widest mb-2">Answers & Documentation</div>
+      <h2 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">Frequently Asked Questions</h2>
+      <p class="text-slate-400 mt-3 text-base">Everything you need to know about our technology, brand fidelity, and commercial licensing.</p>
+    </div>
+
+    <div class="space-y-4">
+      
+      <!-- FAQ Item 1 -->
+      <details class="glass-card rounded-2xl p-6 border border-slate-800 group" open>
+        <summary class="flex items-center justify-between cursor-pointer list-none text-base font-bold text-white">
+          <span>How does Stagely prevent warping my brand logos, packaging text, and labels?</span>
+          <span class="text-brand-400 group-open:rotate-180 transition-transform duration-200">
+            <i data-lucide="chevron-down" class="w-5 h-5"></i>
+          </span>
+        </summary>
+        <p class="text-xs text-slate-400 leading-relaxed mt-4 pt-4 border-t border-slate-800/80">
+          Consumer generative tools pass entire photos through image-to-image diffusion, which frequently distorts fine lines and typography. Stagely uses an <strong class="text-slate-200">RGB Invariant Mask</strong>: the original product pixels are held completely immutable in coordinate space. Only the perimeter and environment are processed by the diffusion model, which projects shadows and lighting onto the background surface while guaranteeing 100% brand fidelity.
+        </p>
+      </details>
+
+      <!-- FAQ Item 2 -->
+      <details class="glass-card rounded-2xl p-6 border border-slate-800 group">
+        <summary class="flex items-center justify-between cursor-pointer list-none text-base font-bold text-white">
+          <span>Why is Stagely's generation speed (&lt; 1.5s) so much faster than other AI platforms?</span>
+          <span class="text-brand-400 group-open:rotate-180 transition-transform duration-200">
+            <i data-lucide="chevron-down" class="w-5 h-5"></i>
+          </span>
+        </summary>
+        <p class="text-xs text-slate-400 leading-relaxed mt-4 pt-4 border-t border-slate-800/80">
+          Most AI services spin up cold container instances or route through congested queue systems, causing 20&ndash;40 second wait times. Stagely is built natively on <strong class="text-slate-200">Runware's distributed edge infrastructure</strong> with pre-warmed weights for Flux Schnell and specialized ControlNet models. This reduces total round-trip inference latency to roughly 1.34 seconds, giving merchants an interactive, live studio experience.
+        </p>
+      </details>
+
+      <!-- FAQ Item 3 -->
+      <details class="glass-card rounded-2xl p-6 border border-slate-800 group">
+        <summary class="flex items-center justify-between cursor-pointer list-none text-base font-bold text-white">
+          <span>Why don't the staged products look like they are "floating" or pasted on?</span>
+          <span class="text-brand-400 group-open:rotate-180 transition-transform duration-200">
+            <i data-lucide="chevron-down" class="w-5 h-5"></i>
+          </span>
+        </summary>
+        <p class="text-xs text-slate-400 leading-relaxed mt-4 pt-4 border-t border-slate-800/80">
+          Traditional cutout tools slap a transparent PNG onto a background and add an artificial Gaussian drop-shadow, which looks fake to human eyes. Stagely computes <strong class="text-slate-200">MiDaS depth maps and surface normals</strong> to establish the exact contact plane (tabletop, pedestal, floor). The diffusion model then synthesizes authentic ambient occlusion, micro-reflections, and contact shadows corresponding to the light source.
+        </p>
+      </details>
+
+      <!-- FAQ Item 4 -->
+      <details class="glass-card rounded-2xl p-6 border border-slate-800 group">
+        <summary class="flex items-center justify-between cursor-pointer list-none text-base font-bold text-white">
+          <span>Can we process our entire catalog of 500+ SKUs automatically?</span>
+          <span class="text-brand-400 group-open:rotate-180 transition-transform duration-200">
+            <i data-lucide="chevron-down" class="w-5 h-5"></i>
+          </span>
+        </summary>
+        <p class="text-xs text-slate-400 leading-relaxed mt-4 pt-4 border-t border-slate-800/80">
+          Yes. In addition to our interactive studio UI, we provide an asynchronous <strong class="text-slate-200">REST API and webhook queue</strong> designed for high-volume catalogs. Enterprise customers can connect their Shopify Plus or BigCommerce store to automatically stage newly uploaded products across 4 standardized brand environments simultaneously.
+        </p>
+      </details>
+
+      <!-- FAQ Item 5 -->
+      <details class="glass-card rounded-2xl p-6 border border-slate-800 group">
+        <summary class="flex items-center justify-between cursor-pointer list-none text-base font-bold text-white">
+          <span>Who owns the commercial rights and copyright to generated scenes?</span>
+          <span class="text-brand-400 group-open:rotate-180 transition-transform duration-200">
+            <i data-lucide="chevron-down" class="w-5 h-5"></i>
+          </span>
+        </summary>
+        <p class="text-xs text-slate-400 leading-relaxed mt-4 pt-4 border-t border-slate-800/80">
+          <strong class="text-slate-200">You do.</strong> You retain 100% full commercial rights, title, and ownership of all output assets. You are free to use them in paid social advertising, print packaging, Amazon A+ content, billboard displays, and physical retail without royalty obligations or platform watermarks.
+        </p>
+      </details>
+
+      <!-- FAQ Item 6 -->
+      <details class="glass-card rounded-2xl p-6 border border-slate-800 group">
+        <summary class="flex items-center justify-between cursor-pointer list-none text-base font-bold text-white">
+          <span>Are output files high enough resolution for print and billboard campaigns?</span>
+          <span class="text-brand-400 group-open:rotate-180 transition-transform duration-200">
+            <i data-lucide="chevron-down" class="w-5 h-5"></i>
+          </span>
+        </summary>
+        <p class="text-xs text-slate-400 leading-relaxed mt-4 pt-4 border-t border-slate-800/80">
+          Yes. While standard diffusion outputs are limited to 1024&times;1024 pixels, our pipeline integrates a 4th stage <strong class="text-slate-200">RealESRGAN super-resolution model</strong> via Runware, generating ultra-sharp 3840&times;2160 (4K UHD) files at 300 DPI, suitable for packaging, retail point-of-sale, and high-DPI desktop zoom.
+        </p>
+      </details>
+
+    </div>
+  </section>
+
+  <!-- RUNWARE API MODAL (OPTIONAL REAL KEY INJECTION) -->
+  <div id="api-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+    <div class="glass-card rounded-2xl max-w-md w-full p-6 border border-slate-700 space-y-4">
+      <div class="flex items-center justify-between">
+        <h3 class="text-base font-bold text-white flex items-center gap-2">
+          <i data-lucide="key" class="w-4 h-4 text-brand-400"></i>
+          Runware API Key Configuration
+        </h3>
+        <button id="btn-close-modal" class="text-slate-400 hover:text-white">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <p class="text-xs text-slate-400">
+        By default, the studio runs in <strong>Interactive Sandbox Mode</strong> with instant pre-rendered neural previews. To test directly against your live Runware inference cluster, enter your API key below:
+      </p>
+
+      <div>
+        <label class="block text-xs font-mono text-slate-300 mb-1">RUNWARE_API_KEY</label>
+        <input type="password" id="input-api-key" placeholder="rw_live_xxxxxxxxxxxxxxxx" class="w-full text-xs font-mono bg-surface-900 border border-slate-700 rounded-lg p-2.5 text-slate-200 focus:outline-none focus:border-brand-500">
+      </div>
+
+      <div class="flex justify-end gap-2 pt-2">
+        <button id="btn-save-key" class="px-4 py-2 rounded-lg bg-brand-600 hover:bg-brand-500 text-xs font-bold text-white">
+          Save Configuration
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="border-t border-slate-800 py-12 bg-surface-900 text-slate-500 text-xs">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-6">
+      <div class="flex items-center gap-2">
+        <div class="w-6 h-6 rounded-lg bg-brand-600 flex items-center justify-center">
+          <i data-lucide="sparkles" class="w-3.5 h-3.5 text-white"></i>
+        </div>
+        <span class="text-sm font-bold text-white">Stagely AI</span>
+        <span class="text-slate-600">|</span>
+        <span>Built for high-scale e-commerce visual pipelines.</span>
+      </div>
+
+      <div class="flex items-center gap-6">
+        <a href="#pipeline" class="hover:text-slate-300">Runware Integration</a>
+        <a href="#comparison" class="hover:text-slate-300">Comparison</a>
+        <a href="#pricing" class="hover:text-slate-300">Pricing</a>
+        <a href="#faq" class="hover:text-slate-300">FAQ</a>
+        <a href="https://github.com" target="_blank" class="hover:text-slate-300 flex items-center gap-1">
+          <i data-lucide="github" class="w-3.5 h-3.5"></i>
+          GitHub
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- SCRIPT LOGIC -->
+  <script>
+    // Initialize icons
+    lucide.createIcons();
+
+    // Sample dataset with realistic e-commerce pairings
+    const sampleData = {
+      perfume: {
+        name: "Oud Wood Fragrance",
+        before: "https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&w=600&q=80",
+        after: {
+          marble: "https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&w=1200&q=80",
+          nordic: "https://images.unsplash.com/photo-1615397349754-cfa2066a298e?auto=format&fit=crop&w=1200&q=80",
+          botanical: "https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&w=1200&q=80",
+          cyber: "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=1200&q=80"
+        },
+        prompt: "Luxury white Italian marble vanity, soft morning directional sunlight, elegant shallow depth of field, high-end cosmetic editorial shoot"
+      },
+      sneaker: {
+        name: "Cloudfoam Runner",
+        before: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=600&q=80",
+        after: {
+          marble: "https://images.unsplash.com/photo-1552346154-21d32810aba3?auto=format&fit=crop&w=1200&q=80",
+          nordic: "https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?auto=format&fit=crop&w=1200&q=80",
+          botanical: "https://images.unsplash.com/photo-1515955656352-a1fa3ffcd111?auto=format&fit=crop&w=1200&q=80",
+          cyber: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=1200&q=80"
+        },
+        prompt: "Urban concrete brutalist podium, subtle atmospheric fog, dramatic rim lighting, athletic lifestyle campaign"
+      },
+      coffee: {
+        name: "Artisan Coffee Blend",
+        before: "https://images.unsplash.com/photo-1559056199-641a0ac8b55e?auto=format&fit=crop&w=600&q=80",
+        after: {
+          marble: "https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=1200&q=80",
+          nordic: "https://images.unsplash.com/photo-1447933601403-0c6688de566e?auto=format&fit=crop&w=1200&q=80",
+          botanical: "https://images.unsplash.com/photo-1498804103079-a6351b050096?auto=format&fit=crop&w=1200&q=80",
+          cyber: "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=1200&q=80"
+        },
+        prompt: "Rustic warm Scandinavian kitchen island, roasted coffee beans scattered on tabletop, morning window light"
+      },
+      skincare: {
+        name: "Botanical Face Serum",
+        before: "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&w=600&q=80",
+        after: {
+          marble: "https://images.unsplash.com/photo-1608248597359-2e5b721e9058?auto=format&fit=crop&w=1200&q=80",
+          nordic: "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&w=1200&q=80",
+          botanical: "https://images.unsplash.com/photo-1598440947619-2c35fc9aa908?auto=format&fit=crop&w=1200&q=80",
+          cyber: "https://images.unsplash.com/photo-1535585209827-a15fcdbc4c2d?auto=format&fit=crop&w=1200&q=80"
+        },
+        prompt: "Smooth river pebbles submerged in clean crystalline water ripple, warm sunlight dapples, fresh spa botanical aesthetic"
+      }
+    };
+
+    let currentSku = 'perfume';
+    let currentPreset = 'marble';
+
+    // DOM Elements
+    const imageBefore = document.getElementById('image-before');
+    const imageAfter = document.getElementById('image-after');
+    const imageBeforeLayer = document.getElementById('image-before-layer');
+    const sliderHandle = document.getElementById('slider-handle');
+    const comparisonBox = document.getElementById('comparison-box');
+    const promptInput = document.getElementById('prompt-input');
+    const btnRender = document.getElementById('btn-render');
+    const loadingOverlay = document.getElementById('loading-overlay');
+    const loadingSubtext = document.getElementById('loading-subtext');
+    const telemetryLatency = document.getElementById('telemetry-latency');
+
+    // Split Slider Dragging Logic
+    let isDragging = false;
+
+    function updateSlider(x) {
+      const rect = comparisonBox.getBoundingClientRect();
+      let pos = (x - rect.left) / rect.width;
+      if (pos < 0) pos = 0;
+      if (pos > 1) pos = 1;
+      const percent = pos * 100;
+      imageBeforeLayer.style.width = percent + '%';
+      sliderHandle.style.left = percent + '%';
+    }
+
+    comparisonBox.addEventListener('mousedown', (e) => {
+      isDragging = true;
+      updateSlider(e.clientX);
+    });
+
+    window.addEventListener('mousemove', (e) => {
+      if (!isDragging) return;
+      updateSlider(e.clientX);
+    });
+
+    window.addEventListener('mouseup', () => {
+      isDragging = false;
+    });
+
+    // Touch support for mobile devices
+    comparisonBox.addEventListener('touchstart', (e) => {
+      isDragging = true;
+      updateSlider(e.touches[0].clientX);
+    });
+
+    window.addEventListener('touchmove', (e) => {
+      if (!isDragging) return;
+      updateSlider(e.touches[0].clientX);
+    });
+
+    window.addEventListener('touchend', () => {
+      isDragging = false;
+    });
+
+    // SKU Selection
+    document.querySelectorAll('.sample-sku-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.sample-sku-btn').forEach(b => {
+          b.classList.remove('border-brand-500', 'bg-brand-500/10', 'active');
+          b.classList.add('border-slate-700', 'bg-surface-800');
+        });
+        btn.classList.add('border-brand-500', 'bg-brand-500/10', 'active');
+        btn.classList.remove('border-slate-700', 'bg-surface-800');
+        
+        currentSku = btn.getAttribute('data-sku');
+        const data = sampleData[currentSku];
+        imageBefore.src = data.before;
+        promptInput.value = data.prompt;
+        triggerRender();
+      });
+    });
+
+    // Preset Selection
+    document.querySelectorAll('.preset-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.preset-btn').forEach(b => {
+          b.classList.remove('border-brand-500', 'bg-brand-500/10', 'active');
+          b.classList.add('border-slate-700', 'bg-surface-800/80');
+        });
+        btn.classList.add('border-brand-500', 'bg-brand-500/10', 'active');
+        btn.classList.remove('border-slate-700', 'bg-surface-800/80');
+
+        currentPreset = btn.getAttribute('data-preset');
+        triggerRender();
+      });
+    });
+
+    // Render Execution Simulation
+    function triggerRender() {
+      loadingOverlay.classList.remove('hidden');
+      loadingOverlay.classList.add('flex');
+      
+      const steps = [
+        "Calling Runware Alpha Matting (0.28s)...",
+        "Synthesizing Depth-Guided Flux Latent Inpaint (0.82s)...",
+        "RealESRGAN 4x Upscaling to 4K UHD (0.22s)..."
+      ];
+      
+      let stepIdx = 0;
+      const interval = setInterval(() => {
+        stepIdx++;
+        if (stepIdx < steps.length) {
+          loadingSubtext.textContent = steps[stepIdx];
+        }
+      }, 400);
+
+      setTimeout(() => {
+        clearInterval(interval);
+        loadingOverlay.classList.add('hidden');
+        loadingOverlay.classList.remove('flex');
+
+        // Apply new after image
+        const targetUrl = sampleData[currentSku].after[currentPreset] || sampleData[currentSku].after.marble;
+        imageAfter.src = targetUrl;
+
+        // Randomize latency slightly for realism
+        const latency = (1.20 + Math.random() * 0.25).toFixed(2);
+        telemetryLatency.textContent = `Latency: ${latency}s`;
+      }, 1300);
+    }
+
+    btnRender.addEventListener('click', triggerRender);
+
+    // Custom File Upload Preview
+    const fileInput = document.getElementById('file-input');
+    fileInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          imageBefore.src = event.target.result;
+          triggerRender();
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    // ROI Calculator Live Update
+    const skuSlider = document.getElementById('sku-slider');
+    const skuCountDisplay = document.getElementById('sku-count-display');
+    const traditionalCostDisplay = document.getElementById('traditional-cost');
+    const annualSavingsDisplay = document.getElementById('annual-savings');
+
+    skuSlider.addEventListener('input', (e) => {
+      const skus = parseInt(e.target.value);
+      skuCountDisplay.textContent = skus;
+      const tradCost = skus * 120;
+      const stagelyCost = 79;
+      const netMonthly = tradCost - stagelyCost;
+      const netAnnual = netMonthly * 12;
+
+      traditionalCostDisplay.textContent = `$${tradCost.toLocaleString()} / mo`;
+      annualSavingsDisplay.textContent = `$${netAnnual.toLocaleString()} / yr`;
+    });
+
+    // API Key Modal Controls
+    const apiModal = document.getElementById('api-modal');
+    const btnApiModal = document.getElementById('btn-api-modal');
+    const btnCloseModal = document.getElementById('btn-close-modal');
+    const btnSaveKey = document.getElementById('btn-save-key');
+    const inputApiKey = document.getElementById('input-api-key');
+    const apiStatusText = document.getElementById('api-status-text');
+
+    btnApiModal.addEventListener('click', () => {
+      apiModal.classList.remove('hidden');
+      apiModal.classList.add('flex');
+    });
+
+    btnCloseModal.addEventListener('click', () => {
+      apiModal.classList.add('hidden');
+      apiModal.classList.remove('flex');
+    });
+
+    btnSaveKey.addEventListener('click', () => {
+      const key = inputApiKey.value.trim();
+      if (key) {
+        apiStatusText.textContent = "API: Connected";
+        apiStatusText.classList.add("text-emerald-400");
+      }
+      apiModal.classList.add('hidden');
+      apiModal.classList.remove('flex');
+    });
+
+    // Download Demo Simulation
+    document.getElementById('btn-download').addEventListener('click', () => {
+      const link = document.createElement('a');
+      link.href = imageAfter.src;
+      link.download = `stagely-${currentSku}-${currentPreset}-4k.jpg`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    });
+  </script>
+</body>
+</html>
