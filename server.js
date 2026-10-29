@@ -38,30 +38,32 @@ app.post('/api/stage', async (req, res) => {
 
   try {
     // If a live Runware key is provided, execute against Runware's REST / WebSocket API
-    if (activeKey && activeKey.startsWith('rw_')) {
+    if (activeKey && activeKey.trim().length >= 20) {
       /*
-       * Production Runware 3-stage pipeline:
-       * 1. POST https://api.runware.ai/v1/imageBackgroundRemoval
-       * 2. POST https://api.runware.ai/v1/imageInference (Flux Schnell / Inpainting)
-       * 3. POST https://api.runware.ai/v1/imageUpscale (RealESRGAN 4x)
+       * Production Runware pipeline:
+       * POST https://api.runware.ai/v1
        */
+      const taskUUID = (typeof crypto !== 'undefined' && crypto.randomUUID) 
+        ? crypto.randomUUID() 
+        : '00000000-0000-4000-8000-' + Date.now().toString(16).padStart(12, '0');
+
       const response = await fetch('https://api.runware.ai/v1', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${activeKey}`
+          'Authorization': `Bearer ${activeKey.trim()}`
         },
         body: JSON.stringify([
           {
             taskType: 'imageInference',
-            taskUUID: `task_${Date.now()}`,
-            positivePrompt: `${prompt}, commercial studio photography, dramatic lighting, 8k, sharp focus`,
+            taskUUID: taskUUID,
+            positivePrompt: `${prompt || preset || 'luxury studio photography'}, commercial product staging, dramatic cinematic lighting, 8k, sharp focus`,
             model: 'runware:100@1',
             numberResults: 1,
             height: 1024,
             width: 1024,
             steps: 4,
-            CFGScale: 2.5
+            CFGScale: 1.5
           }
         ])
       });
